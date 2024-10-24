@@ -6,4 +6,5 @@ Both have CNJBoards Canbus adapter board attached.
 Data rate is 500Kbps.
 
 Topology:
+
 [120ohm] <----> [StnA] <--------> [StnB] <----> [120ohm]
