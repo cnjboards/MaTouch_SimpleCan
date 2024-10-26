@@ -7,4 +7,4 @@ Data rate is 500Kbps.
 
 Topology:
 
-[120ohm] <----> [StnA] <--------> [StnB] <----> [120ohm]
+[120ohm] <--Canbus--> [StnA] <--Canbus--> [StnB] <--Canbus--> [120ohm]
