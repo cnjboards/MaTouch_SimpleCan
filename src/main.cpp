@@ -100,8 +100,8 @@ extern bool fileUploadStarted;
 #define CAN_TX_PRIORITY     3
 #define CAN_RX_PRIORITY     1
 
-#define CAN_TX_RATE_ms      500 // how fast to send frames
-#define CAN_RX_RATE_ms      150 // how fast to poll rx queue
+#define CAN_TX_RATE_ms      1500 // how fast to send frames
+#define CAN_RX_RATE_ms      250 // how fast to poll rx queue
 
 /* can frame structures for Tx and Rx */
 CanFrame txFrame;
@@ -187,8 +187,8 @@ void setupCanBus(int8_t can_tx, int8_t can_rx){
   ESP32Can.setPins(can_tx, can_rx);
 
   // setup some tx and rx queues
-  ESP32Can.setRxQueueSize(10);
-  ESP32Can.setTxQueueSize(10);
+  ESP32Can.setRxQueueSize(0xff);
+  ESP32Can.setTxQueueSize(0xff);
 
   // .setSpeed() and .begin() functions require to use TwaiSpeed enum,
   // but you can easily convert it from numerical value using .convertSpeed()
@@ -210,7 +210,7 @@ void setupCanBus(int8_t can_tx, int8_t can_rx){
   } // end for
 
   // It is also safe to use .begin() without .end() as it calls it internally
-  if(ESP32Can.begin(ESP32Can.convertSpeed(CANSPEED), CAN_TX, CAN_RX, 10, 10)) {
+  if(ESP32Can.begin(ESP32Can.convertSpeed(CANSPEED), CAN_TX, CAN_RX, 0xff, 0xff)) {
       Serial.println("CAN bus started!");
   } else {
       Serial.println("CAN bus failed!");
@@ -253,9 +253,8 @@ void loop() {
 
 /* function to send a can frame */
 void canSend(void *pvParameters) {
-	TickType_t xLastWakeTime; /* keep track of last time can message was sent */
-	TickType_t xFrequency = CAN_TX_RATE_ms / portTICK_PERIOD_MS; /* set the transmit frequency */
-
+	const TickType_t xDelay = CAN_TX_RATE_ms / portTICK_PERIOD_MS;
+  
   /* this task will run forever at frequency set above 
    * to stop this task from running call vTaskSuspend(canTxTask) in the main loop */
 	for (;;) {
@@ -268,9 +267,8 @@ void canSend(void *pvParameters) {
     Serial.println("");
     txCount++;
 
-		vTaskDelayUntil(&xLastWakeTime, xFrequency); /* do something else until it is time to send again */
-        /* the above delay function was used since it specifies an absolute wake time. 
-         * Make sure the code in the forever for loop can run faster then desired send frequency or this task will take all of the CPU time available */
+    // delay a bit
+    vTaskDelay(xDelay);
 	}
 } // end canSend
 
