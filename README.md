@@ -4,6 +4,8 @@ Station A is MaTouch 2.1" Round display.
 Station B is MaTouch 1.28" Round display (GC9A01).
 Data rate is 500Kbps.
 
+Note: When switching build between Station A and Station B you must do a "clean build" 
+
 Topology:
 
 [120ohm] <--Canbus--> [StnA] <--Canbus--> [StnB] <--Canbus--> [120ohm]
